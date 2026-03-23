@@ -1,7 +1,6 @@
 # Yfrobot MP3 V3 keywords
 
 YfrobotMP3V3	KEYWORD1
-CX1000A	KEYWORD1
 
 beginHardwareSerial	KEYWORD2
 beginSoftwareSerial	KEYWORD2

@@ -15,7 +15,7 @@ static void beginPlayer() {
 }
 
 static void printMenu() {
-  Serial.println(F("=== CX1000A MP3 V3 Control Menu ==="));
+  Serial.println(F("=== YFROBOT MP3 V3 Control Menu ==="));
   Serial.println(F("p play"));
   Serial.println(F("u pause"));
   Serial.println(F("x stop"));

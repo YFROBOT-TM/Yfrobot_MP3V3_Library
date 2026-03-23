@@ -32,7 +32,7 @@ void setup() {
 
   player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
 
-  Serial.println(F("CX1000A MP3 V3 - AVR software serial demo"));
+  Serial.println(F("YFROBOT MP3 V3 - AVR software serial demo"));
   Serial.println(F("RX <- module TX on D11, TX -> module RX on D10"));
   printHelp();
 }

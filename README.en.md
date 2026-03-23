@@ -1,6 +1,6 @@
 # Yfrobot MP3 V3 Arduino Library
 
-Arduino library for the YFROBOT MP3 Audio Module V3 based on the `CX1000A` chip.
+Arduino library for the YFROBOT MP3 Audio Module V3.
 
 ## Features
 
@@ -49,12 +49,4 @@ void setup() {
 
 void loop() {
 }
-```
-
-You can also include the chip-name wrapper:
-
-```cpp
-#include <CX1000A.h>
-
-CX1000A player;
 ```
