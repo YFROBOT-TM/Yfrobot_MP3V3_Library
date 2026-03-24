@@ -1,6 +1,8 @@
-# Yfrobot MP3 V3 Arduino Library
+# Yfrobot MP3 V3 Arduino Library [![English Version](https://img.shields.io/badge/-English-blue)](README.en.md)
 
-[English](README.en.md)
+## Language Switch
+- [English](README.en.md)
+- [中文 (Chinese)](README.md)
 
 ## 1. 库简介
 
@@ -204,8 +206,7 @@ void loop() {
 ### 6.5 播放模式与参数保存
 
 - `setPlaybackMode(PlayMode mode, uint16_t repeatCount = 0)`
-  设置播放模式与循环次数。
-  `repeatCount = 0` 表示无限循环。
+  设置播放模式与循环次数。`repeatCount = 0` 表示无限循环。
 
 - `readPlaybackMode(PlaybackModeSettings &settings, uint32_t timeoutMs = 300)`
   读取当前播放模式与循环次数。

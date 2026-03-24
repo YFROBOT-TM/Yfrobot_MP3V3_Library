@@ -1,60 +1,62 @@
-# Yfrobot MP3 V3 Arduino Library
+# Yfrobot MP3 V3 Arduino Library [![中文版本](https://img.shields.io/badge/-中文-red)](README.md)
 
-[English](README.en.md)
+## Language Switch
+- [English](README.en.md)
+- [中文 (Chinese)](README.md)
 
-## 1. 库简介
+## 1. Overview
 
-本库用于通过串口协议控制 YFROBOT MP3 V3 模块，适用于：
+This library is used to control the YFROBOT MP3 V3 module through the UART protocol, and it supports:
 
 - Arduino UNO R3
 - Arduino Mega2560
 - ESP32
 - ESP32-S3
 
-兼容方式如下：
+Supported connection modes:
 
-- UNO R3 / Mega2560：支持软串口、硬件串口
-- ESP32 / ESP32-S3：支持硬件串口，支持自定义引脚
+- UNO R3 / Mega2560: software serial and hardware serial
+- ESP32 / ESP32-S3: hardware serial with custom pins
 
-本库适合以下场景：
+This library is suitable for:
 
-- 教学演示
-- 产品卖货演示
-- 拍视频展示音频效果
-- 项目中快速接入串口控制音频播放
+- teaching demos
+- product showcase demos
+- video demonstrations of audio effects
+- quickly integrating UART audio control into projects
 
-## 2. 模块预存音频树
+## 2. Preloaded Audio Tree
 
-出厂预存音频资源如下：
+The module is preloaded from the factory with the following audio resources:
 
-- 根目录：`00001` ~ `00010`
-- `ZH` 组合播放文件夹：`01.mp3` ~ `03.mp3`
-- `chabo` 文件夹：`00001.mp3` ~ `00008.mp3`
+- Root directory: `00001` ~ `00010`
+- `ZH` combination playback folder: `01.mp3` ~ `03.mp3`
+- `chabo` folder: `00001.mp3` ~ `00008.mp3`
 
-示例程序已尽量基于这套默认音频树设计，下载后即可直接演示。
+The example sketches are designed around this default audio tree as much as possible, so they can be demonstrated directly after uploading.
 
-## 3. 串口协议基础参数
+## 3. UART Protocol Basics
 
-- 波特率：`9600`
-- 数据位：`8`
-- 停止位：`1`
-- 校验位：`N`
-- 帧头：`0x7E`
-- 帧尾：`0xEF`
-- 默认设备地址：`0x0001`
-- 推荐广播地址：`0xFFFF`
+- Baud rate: `9600`
+- Data bits: `8`
+- Stop bits: `1`
+- Parity: `N`
+- Frame header: `0x7E`
+- Frame end: `0xEF`
+- Default device ID: `0x0001`
+- Recommended broadcast address: `0xFFFF`
 
-## 4. 安装方法
+## 4. Installation
 
-将整个库文件夹放入：
+Place the entire library folder into:
 
 `Documents/Arduino/libraries/Yfrobot_MP3V3_Library`
 
-然后重新打开 Arduino IDE。
+Then reopen Arduino IDE.
 
-## 5. 快速开始
+## 5. Quick Start
 
-### 5.1 UNO R3 / Mega2560 软串口
+### 5.1 UNO R3 / Mega2560 Software Serial
 
 ```cpp
 #include <Yfrobot_MP3V3.h>
@@ -73,7 +75,7 @@ void loop() {
 }
 ```
 
-### 5.2 Mega2560 硬件串口
+### 5.2 Mega2560 Hardware Serial
 
 ```cpp
 #include <Yfrobot_MP3V3.h>
@@ -89,7 +91,7 @@ void loop() {
 }
 ```
 
-### 5.3 ESP32 / ESP32-S3 自定义引脚
+### 5.3 ESP32 / ESP32-S3 Custom Pins
 
 ```cpp
 #include <Yfrobot_MP3V3.h>
@@ -106,174 +108,173 @@ void loop() {
 }
 ```
 
-## 6. API 中文说明
+## 6. API Description
 
-### 6.1 初始化与连接
+### 6.1 Initialization and Connection
 
 - `beginHardwareSerial(HardwareSerial &serial, uint32_t baud = 9600)`
-  使用硬件串口初始化模块，适合 Mega2560、ESP32、ESP32-S3，也可用于 UNO R3 的硬件串口方案。
+  Initializes the module with a hardware serial port. Suitable for Mega2560, ESP32, ESP32-S3, and also for the UNO R3 hardware serial solution.
 
 - `beginHardwareSerial(HardwareSerial &serial, int8_t rxPin, int8_t txPin, uint32_t baud = 9600)`
-  仅用于 ESP32 / ESP32-S3，支持自定义串口引脚。
+  Only for ESP32 / ESP32-S3. Supports custom serial pins.
 
 - `beginSoftwareSerial(uint8_t rxPin, uint8_t txPin, uint32_t baud = 9600)`
-  仅用于 AVR 平台，使用软串口初始化模块，适合 UNO R3 和 Mega2560。
+  Only for AVR platforms. Initializes the module with software serial, suitable for UNO R3 and Mega2560.
 
 - `end()`
-  关闭当前串口连接并释放内部资源。
+  Closes the current serial connection and releases internal resources.
 
 - `isConnected()`
-  判断库是否已经完成串口初始化。
+  Checks whether the library has finished serial initialization.
 
 - `isUsingSoftwareSerial()`
-  判断当前是否处于软串口模式。
+  Checks whether the current mode is software serial.
 
 - `baud()`
-  获取当前串口波特率。
+  Gets the current serial baud rate.
 
-### 6.2 设备地址
+### 6.2 Device Address
 
 - `setDeviceId(uint16_t deviceId)`
-  设置发送命令的目标设备地址，单模块项目通常建议使用广播地址 `kBroadcastDeviceId`。
+  Sets the target device address for commands. For single-module projects, the broadcast address `kBroadcastDeviceId` is usually recommended.
 
 - `deviceId()`
-  读取当前设置的目标设备地址。
+  Reads the currently configured target device address.
 
-### 6.3 播放控制
+### 6.3 Playback Control
 
 - `play()`
-  播放当前曲目。
+  Plays the current track.
 
 - `pause()`
-  暂停当前曲目。
+  Pauses the current track.
 
 - `stop()`
-  停止当前播放。
+  Stops current playback.
 
 - `previousTrack()`
-  切换到上一曲。
+  Switches to the previous track.
 
 - `nextTrack()`
-  切换到下一曲。
+  Switches to the next track.
 
 - `playTrack(uint16_t trackNumber)`
-  指定根目录曲目编号并立即播放，例如播放 `00010`。
+  Plays a root directory track immediately, for example `00010`.
 
 - `selectTrack(uint16_t trackNumber)`
-  指定根目录曲目编号但不立即播放，随后可再调用 `play()`。
+  Selects a root directory track without playing it immediately. You can call `play()` afterward.
 
 - `playPath(StorageDevice storage, const char *path)`
-  指定盘符和路径播放，例如：
+  Plays a file by storage and path, for example:
   `playPath(STORAGE_FLASH, "/chabo/00001.*")`
 
 - `insertAdvert(StorageDevice storage, const char *path)`
-  指定盘符和路径进行插播，插播完成后会回到原来的播放状态。
+  Starts insert playback by storage and path. After the insert track finishes, playback returns to the previous state.
 
 - `stopAdvert()`
-  提前结束当前插播。
+  Ends the current insert playback in advance.
 
 - `playPreviousFolder()`
-  切换到上一文件夹并播放。
+  Switches to the previous folder and starts playback.
 
 - `playNextFolder()`
-  切换到下一文件夹并播放。
+  Switches to the next folder and starts playback.
 
 - `playCombination(const char *trackList)`
-  组合播放 `/ZH` 文件夹中的两位编号曲目，例如：
-  `"0102"` 表示播放 01 + 02，
-  `"010203"` 表示播放 01 + 02 + 03。
+  Plays a combination of two-digit numbered tracks in the `/ZH` folder. For example:
+  `"0102"` means play 01 + 02,
+  `"010203"` means play 01 + 02 + 03.
 
-### 6.4 音量与 EQ
+### 6.4 Volume and EQ
 
 - `setVolume(uint8_t volume)`
-  直接设置音量，范围 `0 ~ 30`。
+  Sets the volume directly. Range: `0 ~ 30`.
 
 - `volumeUp()`
-  音量加 1。
+  Increases the volume by 1.
 
 - `volumeDown()`
-  音量减 1。
+  Decreases the volume by 1.
 
 - `readVolume(uint8_t &volume, uint32_t timeoutMs = 300)`
-  查询当前音量。
+  Reads the current volume.
 
 - `setEq(EqPreset eq)`
-  设置 EQ 模式，可选：
-  `EQ_NORMAL`、`EQ_ROCK`、`EQ_POP`、`EQ_CLASSIC`、`EQ_JAZZ`、`EQ_COUNTRY`、`EQ_CUSTOM`
+  Sets the EQ mode. Available values:
+  `EQ_NORMAL`, `EQ_ROCK`, `EQ_POP`, `EQ_CLASSIC`, `EQ_JAZZ`, `EQ_COUNTRY`, `EQ_CUSTOM`
 
-### 6.5 播放模式与参数保存
+### 6.5 Playback Mode and Parameter Saving
 
 - `setPlaybackMode(PlayMode mode, uint16_t repeatCount = 0)`
-  设置播放模式与循环次数。
-  `repeatCount = 0` 表示无限循环。
+  Sets the playback mode and repeat count. `repeatCount = 0` means infinite repeat.
 
 - `readPlaybackMode(PlaybackModeSettings &settings, uint32_t timeoutMs = 300)`
-  读取当前播放模式与循环次数。
+  Reads the current playback mode and repeat count.
 
 - `saveSettings()`
-  保存当前参数到模块内部。
+  Saves the current settings into the module.
 
 - `restoreFactorySettings()`
-  恢复模块出厂默认参数。
+  Restores the factory default settings.
 
 - `reboot()`
-  重启模块。
+  Reboots the module.
 
-### 6.6 查询接口
+### 6.6 Query Interfaces
 
 - `readPlayState(PlayState &state, uint32_t timeoutMs = 300)`
-  查询当前播放状态。
+  Reads the current playback state.
 
 - `readOnlineStorageMask(uint8_t &mask, uint32_t timeoutMs = 300)`
-  查询当前在线盘符位掩码。
+  Reads the bit mask of currently online storage devices.
 
 - `readCurrentStorage(StorageDevice &storage, uint32_t timeoutMs = 300)`
-  查询当前播放盘符。
+  Reads the currently active playback storage device.
 
 - `switchStorage(StorageDevice storage)`
-  切换当前播放盘符。
+  Switches the current playback storage device.
 
 - `readTotalTracks(uint16_t &trackCount, uint32_t timeoutMs = 300)`
-  读取当前盘符总曲目数。
+  Reads the total number of tracks on the current storage device.
 
 - `readFolderTrackCount(uint16_t &trackCount, uint32_t timeoutMs = 300)`
-  读取当前文件夹曲目数。
+  Reads the number of tracks in the current folder.
 
 - `readCurrentTrackName(char *buffer, size_t bufferLength, uint32_t timeoutMs = 300)`
-  读取当前曲目文件名。
+  Reads the current track file name.
 
 - `readShortFileName(char *buffer, size_t bufferLength, uint32_t timeoutMs = 300)`
-  读取当前曲目短文件名。
+  Reads the current track short file name.
 
 - `readModuleDeviceId(uint16_t &moduleDeviceId, uint32_t timeoutMs = 300)`
-  读取模块设备地址。
+  Reads the module device address.
 
 - `readBaudRate(uint32_t &baudRate, uint32_t timeoutMs = 300)`
-  读取模块当前波特率。
+  Reads the current module baud rate.
 
-### 6.7 高级接口
+### 6.7 Advanced Interfaces
 
 - `sendCommand(uint8_t command, const uint8_t *payload = nullptr, size_t payloadLength = 0)`
-  发送任意协议命令，适合高级用户扩展使用。
+  Sends any protocol command. Suitable for advanced users extending functionality.
 
 - `queryFrame(uint8_t command, Frame &frame, uint32_t timeoutMs = 300)`
-  发送查询命令并直接获取完整返回帧。
+  Sends a query command and directly gets the full response frame.
 
-## 7. 常用枚举说明
+## 7. Common Enumerations
 
-### 7.1 盘符枚举
+### 7.1 Storage Device Enumeration
 
 - `STORAGE_USB`
 - `STORAGE_SD`
 - `STORAGE_FLASH`
 
-### 7.2 播放状态枚举
+### 7.2 Playback State Enumeration
 
 - `PLAY_STATE_STOPPED`
 - `PLAY_STATE_PLAYING`
 - `PLAY_STATE_PAUSED`
 
-### 7.3 播放模式枚举
+### 7.3 Playback Mode Enumeration
 
 - `PLAY_MODE_LOOP_ALL`
 - `PLAY_MODE_LOOP_SINGLE`
@@ -283,7 +284,7 @@ void loop() {
 - `PLAY_MODE_STOP_AFTER_SINGLE`
 - `PLAY_MODE_STOP_AFTER_RANDOM`
 
-### 7.4 EQ 枚举
+### 7.4 EQ Enumeration
 
 - `EQ_NORMAL`
 - `EQ_ROCK`
@@ -293,42 +294,42 @@ void loop() {
 - `EQ_COUNTRY`
 - `EQ_CUSTOM`
 
-## 8. 示例程序说明
+## 8. Example Sketches
 
 - `01_Board_AVR_SoftwareSerial`
-  AVR 软串口基础接线示例，适合 UNO R3 / Mega2560。
+  Basic AVR software serial wiring example for UNO R3 / Mega2560.
 
 - `02_Board_AVR_HardwareSerial`
-  AVR 硬件串口基础接线示例，适合 UNO R3 / Mega2560。
+  Basic AVR hardware serial wiring example for UNO R3 / Mega2560.
 
 - `03_Board_ESP32_CustomPins`
-  ESP32 / ESP32-S3 自定义引脚接线示例。
+  ESP32 / ESP32-S3 custom pin wiring example.
 
 - `10_Playback_Control_Demo`
-  演示播放、暂停、停止、上一曲、下一曲、选曲不播放等核心播放控制。
+  Demonstrates playback, pause, stop, previous track, next track, and select-without-play operations.
 
 - `20_Advert_Path_Demo`
-  演示指定路径播放、指定路径插播、结束插播、上一文件夹播放、下一文件夹播放。
+  Demonstrates path playback, insert playback, stop insert playback, previous folder playback, and next folder playback.
 
 - `30_Volume_EQ_Demo`
-  演示设置音量、音量加减、不同 EQ 模式试听。
+  Demonstrates direct volume setting, volume up/down, and EQ listening comparison.
 
 - `40_PlayMode_Save_Demo`
-  演示播放模式设置、循环次数设置、读取播放模式、保存参数、恢复默认参数。
+  Demonstrates playback mode setting, repeat count setting, reading playback mode, saving settings, and restoring default settings.
 
 - `50_Combination_Reboot_Demo`
-  演示组合播放 `01 02`、`01 02 03` 以及重启模块。
+  Demonstrates combination playback for `01 02`, `01 02 03`, and module reboot.
 
 - `90_SerialMonitor_AllFunctions`
-  通过串口监视器交互式控制，适合教学、调试和拍演示视频。
+  Interactive control through the serial monitor, suitable for teaching, debugging, and product demo videos.
 
-## 9. 示例中用到的默认路径
+## 9. Default Paths Used in the Examples
 
-- 根目录长音频：`00010`
-- 组合播放：`/ZH/01.mp3`、`/ZH/02.mp3`、`/ZH/03.mp3`
-- 插播示例：`/chabo/00001.*`
-- 路径播放示例：`/chabo/00002.*`
+- Long root track: `00010`
+- Combination playback: `/ZH/01.mp3`, `/ZH/02.mp3`, `/ZH/03.mp3`
+- Insert playback example: `/chabo/00001.*`
+- Path playback example: `/chabo/00002.*`
 
 ## 10. License
 
-MIT License，详见 `extras/LICENSE`。
+MIT License. See `extras/LICENSE` for details.
