@@ -36,6 +36,11 @@ static const uint8_t CMD_RESTORE_DEFAULTS = 0x33;
 static const uint8_t CMD_REBOOT = 0x34;
 }
 
+/**
+ * @brief 构造函数，初始化内部成员变量。
+ * @param 无。
+ * @return 无。
+ */
 YfrobotMP3V3::YfrobotMP3V3()
     : _stream(nullptr),
       _hardwareSerial(nullptr),
@@ -46,10 +51,21 @@ YfrobotMP3V3::YfrobotMP3V3()
       _deviceId(kBroadcastDeviceId),
       _baud(kDefaultBaud) {}
 
+/**
+ * @brief 析构函数，释放串口资源。
+ * @param 无。
+ * @return 无。
+ */
 YfrobotMP3V3::~YfrobotMP3V3() {
   end();
 }
 
+/**
+ * @brief 使用硬件串口初始化模块。
+ * @param serial 连接模块的硬件串口对象。
+ * @param baud 串口波特率。
+ * @return `true` 表示初始化成功；`false` 表示初始化失败。
+ */
 bool YfrobotMP3V3::beginHardwareSerial(HardwareSerial &serial, uint32_t baud) {
   end();
   _hardwareSerial = &serial;
@@ -60,6 +76,14 @@ bool YfrobotMP3V3::beginHardwareSerial(HardwareSerial &serial, uint32_t baud) {
 }
 
 #if defined(ESP32)
+/**
+ * @brief 使用 ESP32/ESP32-S3 硬件串口和自定义引脚初始化模块。
+ * @param serial 连接模块的硬件串口对象。
+ * @param rxPin 模块 TX 连接到开发板的 RX 引脚号。
+ * @param txPin 模块 RX 连接到开发板的 TX 引脚号。
+ * @param baud 串口波特率。
+ * @return `true` 表示初始化成功；`false` 表示初始化失败。
+ */
 bool YfrobotMP3V3::beginHardwareSerial(HardwareSerial &serial,
                                        int8_t rxPin,
                                        int8_t txPin,
@@ -74,6 +98,13 @@ bool YfrobotMP3V3::beginHardwareSerial(HardwareSerial &serial,
 #endif
 
 #if YFMP3V3_HAS_SOFTWARE_SERIAL
+/**
+ * @brief 使用 AVR 软串口初始化模块。
+ * @param rxPin 开发板接收引脚。
+ * @param txPin 开发板发送引脚。
+ * @param baud 串口波特率。
+ * @return `true` 表示初始化成功；`false` 表示初始化失败。
+ */
 bool YfrobotMP3V3::beginSoftwareSerial(uint8_t rxPin, uint8_t txPin, uint32_t baud) {
   end();
   _softwareSerial = new SoftwareSerial(rxPin, txPin);
@@ -88,6 +119,11 @@ bool YfrobotMP3V3::beginSoftwareSerial(uint8_t rxPin, uint8_t txPin, uint32_t ba
 }
 #endif
 
+/**
+ * @brief 结束当前串口连接并释放资源。
+ * @param 无。
+ * @return 无。
+ */
 void YfrobotMP3V3::end() {
 #if YFMP3V3_HAS_SOFTWARE_SERIAL
   if (_softwareSerial != nullptr) {
@@ -102,46 +138,101 @@ void YfrobotMP3V3::end() {
   _transportMode = TRANSPORT_NONE;
 }
 
+/**
+ * @brief 判断当前是否已经完成初始化。
+ * @param 无。
+ * @return `true` 表示已初始化；`false` 表示未初始化。
+ */
 bool YfrobotMP3V3::isConnected() const {
   return _stream != nullptr;
 }
 
+/**
+ * @brief 判断当前是否使用软串口。
+ * @param 无。
+ * @return `true` 表示当前使用软串口；`false` 表示当前不是软串口。
+ */
 bool YfrobotMP3V3::isUsingSoftwareSerial() const {
   return _transportMode == TRANSPORT_SOFTWARE;
 }
 
+/**
+ * @brief 获取当前波特率。
+ * @param 无。
+ * @return 当前波特率。
+ */
 uint32_t YfrobotMP3V3::baud() const {
   return _baud;
 }
 
+/**
+ * @brief 设置目标设备地址。
+ * @param deviceId 设备地址。
+ * @return 无。
+ */
 void YfrobotMP3V3::setDeviceId(uint16_t deviceId) {
   _deviceId = deviceId;
 }
 
+/**
+ * @brief 获取当前目标设备地址。
+ * @param 无。
+ * @return 当前目标设备地址。
+ */
 uint16_t YfrobotMP3V3::deviceId() const {
   return _deviceId;
 }
 
+/**
+ * @brief 播放当前曲目。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::play() {
   return sendCommand(CMD_PLAY);
 }
 
+/**
+ * @brief 暂停当前曲目。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::pause() {
   return sendCommand(CMD_PAUSE);
 }
 
+/**
+ * @brief 停止播放。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::stop() {
   return sendCommand(CMD_STOP);
 }
 
+/**
+ * @brief 切换到上一曲。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::previousTrack() {
   return sendCommand(CMD_PREVIOUS_TRACK);
 }
 
+/**
+ * @brief 切换到下一曲。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::nextTrack() {
   return sendCommand(CMD_NEXT_TRACK);
 }
 
+/**
+ * @brief 指定根目录曲目编号并立即播放。
+ * @param trackNumber 曲目编号。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::playTrack(uint16_t trackNumber) {
   const uint8_t payload[2] = {
       static_cast<uint8_t>(trackNumber >> 8),
@@ -149,6 +240,11 @@ bool YfrobotMP3V3::playTrack(uint16_t trackNumber) {
   return sendCommand(CMD_PLAY_TRACK, payload, sizeof(payload));
 }
 
+/**
+ * @brief 指定根目录曲目编号但不立即播放。
+ * @param trackNumber 曲目编号。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::selectTrack(uint16_t trackNumber) {
   const uint8_t payload[2] = {
       static_cast<uint8_t>(trackNumber >> 8),
@@ -156,6 +252,12 @@ bool YfrobotMP3V3::selectTrack(uint16_t trackNumber) {
   return sendCommand(CMD_SELECT_TRACK, payload, sizeof(payload));
 }
 
+/**
+ * @brief 指定盘符和路径播放音频。
+ * @param storage 目标盘符。
+ * @param path ASCII 路径字符串。
+ * @return `true` 表示命令发送成功；`false` 表示参数非法或发送失败。
+ */
 bool YfrobotMP3V3::playPath(StorageDevice storage, const char *path) {
   if (path == nullptr) {
     return false;
@@ -172,6 +274,12 @@ bool YfrobotMP3V3::playPath(StorageDevice storage, const char *path) {
   return sendCommand(CMD_PLAY_PATH, payload, pathLength + 1);
 }
 
+/**
+ * @brief 指定盘符和路径进行插播。
+ * @param storage 目标盘符。
+ * @param path ASCII 路径字符串。
+ * @return `true` 表示命令发送成功；`false` 表示参数非法或发送失败。
+ */
 bool YfrobotMP3V3::insertAdvert(StorageDevice storage, const char *path) {
   if (path == nullptr) {
     return false;
@@ -188,18 +296,38 @@ bool YfrobotMP3V3::insertAdvert(StorageDevice storage, const char *path) {
   return sendCommand(CMD_INSERT_ADVERT, payload, pathLength + 1);
 }
 
+/**
+ * @brief 提前结束当前插播。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::stopAdvert() {
   return sendCommand(CMD_STOP_ADVERT);
 }
 
+/**
+ * @brief 切换到上一个文件夹并播放。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::playPreviousFolder() {
   return sendCommand(CMD_PREVIOUS_FOLDER);
 }
 
+/**
+ * @brief 切换到下一个文件夹并播放。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::playNextFolder() {
   return sendCommand(CMD_NEXT_FOLDER);
 }
 
+/**
+ * @brief 组合播放 `/ZH` 文件夹中的多首曲目。
+ * @param trackList 组合字符串，例如 `"0102"`、`"010203"`。
+ * @return `true` 表示命令发送成功；`false` 表示参数非法或发送失败。
+ */
 bool YfrobotMP3V3::playCombination(const char *trackList) {
   if (trackList == nullptr) {
     return false;
@@ -215,6 +343,11 @@ bool YfrobotMP3V3::playCombination(const char *trackList) {
                      payloadLength);
 }
 
+/**
+ * @brief 直接设置音量。
+ * @param volume 音量值。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::setVolume(uint8_t volume) {
   if (volume > 30) {
     volume = 30;
@@ -222,14 +355,30 @@ bool YfrobotMP3V3::setVolume(uint8_t volume) {
   return sendCommand(CMD_SET_VOLUME, &volume, 1);
 }
 
+/**
+ * @brief 音量加 1。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::volumeUp() {
   return sendCommand(CMD_VOLUME_UP);
 }
 
+/**
+ * @brief 音量减 1。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::volumeDown() {
   return sendCommand(CMD_VOLUME_DOWN);
 }
 
+/**
+ * @brief 查询当前音量。
+ * @param volume 用于返回音量值的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readVolume(uint8_t &volume, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_VOLUME, frame, timeoutMs) || frame.dataLength < 1) {
@@ -239,6 +388,12 @@ bool YfrobotMP3V3::readVolume(uint8_t &volume, uint32_t timeoutMs) {
   return true;
 }
 
+/**
+ * @brief 设置播放模式和循环次数。
+ * @param mode 播放模式。
+ * @param repeatCount 循环次数。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::setPlaybackMode(PlayMode mode, uint16_t repeatCount) {
   const uint8_t payload[3] = {
       static_cast<uint8_t>(mode),
@@ -247,6 +402,12 @@ bool YfrobotMP3V3::setPlaybackMode(PlayMode mode, uint16_t repeatCount) {
   return sendCommand(CMD_SET_PLAYBACK_MODE, payload, sizeof(payload));
 }
 
+/**
+ * @brief 查询当前播放模式和循环次数。
+ * @param settings 用于保存查询结果的结构体。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readPlaybackMode(PlaybackModeSettings &settings, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_PLAYBACK_MODE, frame, timeoutMs) || frame.dataLength < 3) {
@@ -258,23 +419,49 @@ bool YfrobotMP3V3::readPlaybackMode(PlaybackModeSettings &settings, uint32_t tim
   return true;
 }
 
+/**
+ * @brief 设置 EQ 模式。
+ * @param eq EQ 模式枚举值。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::setEq(EqPreset eq) {
   const uint8_t payload = static_cast<uint8_t>(eq);
   return sendCommand(CMD_SET_EQ, &payload, 1);
 }
 
+/**
+ * @brief 保存当前参数。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::saveSettings() {
   return sendCommand(CMD_SAVE_SETTINGS);
 }
 
+/**
+ * @brief 恢复默认参数。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::restoreFactorySettings() {
   return sendCommand(CMD_RESTORE_DEFAULTS);
 }
 
+/**
+ * @brief 重启模块。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::reboot() {
   return sendCommand(CMD_REBOOT);
 }
 
+/**
+ * @brief 查询当前播放状态。
+ * @param state 用于返回播放状态的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readPlayState(PlayState &state, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_PLAY_STATE, frame, timeoutMs) || frame.dataLength < 1) {
@@ -284,6 +471,12 @@ bool YfrobotMP3V3::readPlayState(PlayState &state, uint32_t timeoutMs) {
   return true;
 }
 
+/**
+ * @brief 查询当前在线盘符位掩码。
+ * @param mask 用于返回在线盘符掩码的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readOnlineStorageMask(uint8_t &mask, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_ONLINE_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
@@ -293,6 +486,12 @@ bool YfrobotMP3V3::readOnlineStorageMask(uint8_t &mask, uint32_t timeoutMs) {
   return true;
 }
 
+/**
+ * @brief 查询当前播放盘符。
+ * @param storage 用于返回盘符的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readCurrentStorage(StorageDevice &storage, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_CURRENT_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
@@ -302,19 +501,43 @@ bool YfrobotMP3V3::readCurrentStorage(StorageDevice &storage, uint32_t timeoutMs
   return true;
 }
 
+/**
+ * @brief 切换当前播放盘符。
+ * @param storage 目标盘符。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::switchStorage(StorageDevice storage) {
   const uint8_t payload = static_cast<uint8_t>(storage);
   return sendCommand(CMD_SWITCH_STORAGE, &payload, 1);
 }
 
+/**
+ * @brief 查询当前盘符总曲目数。
+ * @param trackCount 用于返回曲目总数的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readTotalTracks(uint16_t &trackCount, uint32_t timeoutMs) {
   return readU16Response(CMD_QUERY_TOTAL_TRACKS, trackCount, timeoutMs);
 }
 
+/**
+ * @brief 查询当前文件夹曲目数。
+ * @param trackCount 用于返回文件夹曲目数的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readFolderTrackCount(uint16_t &trackCount, uint32_t timeoutMs) {
   return readU16Response(CMD_QUERY_FOLDER_TRACKS, trackCount, timeoutMs);
 }
 
+/**
+ * @brief 查询当前曲目名称。
+ * @param buffer 用于接收曲目名称的缓冲区。
+ * @param bufferLength 缓冲区长度。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时、参数非法或当前无返回。
+ */
 bool YfrobotMP3V3::readCurrentTrackName(char *buffer, size_t bufferLength, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_CURRENT_TRACK_NAME, frame, timeoutMs)) {
@@ -323,6 +546,13 @@ bool YfrobotMP3V3::readCurrentTrackName(char *buffer, size_t bufferLength, uint3
   return copyAsciiPayload(frame, buffer, bufferLength);
 }
 
+/**
+ * @brief 查询当前曲目的短文件名。
+ * @param buffer 用于接收短文件名的缓冲区。
+ * @param bufferLength 缓冲区长度。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时、参数非法或当前无返回。
+ */
 bool YfrobotMP3V3::readShortFileName(char *buffer, size_t bufferLength, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_QUERY_SHORT_FILE_NAME, frame, timeoutMs)) {
@@ -331,10 +561,22 @@ bool YfrobotMP3V3::readShortFileName(char *buffer, size_t bufferLength, uint32_t
   return copyAsciiPayload(frame, buffer, bufferLength);
 }
 
+/**
+ * @brief 查询模块设备地址。
+ * @param moduleDeviceId 用于返回设备地址的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readModuleDeviceId(uint16_t &moduleDeviceId, uint32_t timeoutMs) {
   return readU16Response(CMD_READ_DEVICE_ID, moduleDeviceId, timeoutMs);
 }
 
+/**
+ * @brief 查询当前波特率。
+ * @param baudRate 用于返回波特率的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readBaudRate(uint32_t &baudRate, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(CMD_READ_BAUD_RATE, frame, timeoutMs) || frame.dataLength < 4) {
@@ -348,6 +590,13 @@ bool YfrobotMP3V3::readBaudRate(uint32_t &baudRate, uint32_t timeoutMs) {
   return true;
 }
 
+/**
+ * @brief 发送任意协议命令。
+ * @param command 指令码。
+ * @param payload 数据区首地址，可为空。
+ * @param payloadLength 数据区长度，单位字节。
+ * @return `true` 表示命令发送成功；`false` 表示串口未初始化或参数非法。
+ */
 bool YfrobotMP3V3::sendCommand(uint8_t command, const uint8_t *payload, size_t payloadLength) {
   if (!isConnected()) {
     return false;
@@ -357,6 +606,13 @@ bool YfrobotMP3V3::sendCommand(uint8_t command, const uint8_t *payload, size_t p
   return sendFrame(command, payload, payloadLength);
 }
 
+/**
+ * @brief 发送查询命令并等待完整返回帧。
+ * @param command 查询指令码。
+ * @param frame 用于保存返回帧的结构体。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示发送失败、超时或解析失败。
+ */
 bool YfrobotMP3V3::queryFrame(uint8_t command, Frame &frame, uint32_t timeoutMs) {
   if (!sendCommand(command)) {
     return false;
@@ -382,6 +638,11 @@ bool YfrobotMP3V3::queryFrame(uint8_t command, Frame &frame, uint32_t timeoutMs)
   return false;
 }
 
+/**
+ * @brief 完成串口对象初始化后的公共收尾动作。
+ * @param baud 当前波特率。
+ * @return `true` 表示初始化成功；`false` 表示当前流对象为空。
+ */
 bool YfrobotMP3V3::beginWithActiveStream(uint32_t baud) {
   if (_stream == nullptr) {
     return false;
@@ -393,6 +654,13 @@ bool YfrobotMP3V3::beginWithActiveStream(uint32_t baud) {
   return true;
 }
 
+/**
+ * @brief 按协议打包并发送完整数据帧。
+ * @param command 指令码。
+ * @param payload 数据区首地址，可为空。
+ * @param payloadLength 数据区长度，单位字节。
+ * @return `true` 表示发送成功；`false` 表示发送失败。
+ */
 bool YfrobotMP3V3::sendFrame(uint8_t command, const uint8_t *payload, size_t payloadLength) {
   if (_stream == nullptr || payloadLength > kMaxPayloadBytes) {
     return false;
@@ -428,6 +696,12 @@ bool YfrobotMP3V3::sendFrame(uint8_t command, const uint8_t *payload, size_t pay
   return true;
 }
 
+/**
+ * @brief 从串口接收并解析一帧返回数据。
+ * @param frame 用于保存解析结果的结构体。
+ * @param timeoutMs 接收超时时间，单位毫秒。
+ * @return `true` 表示成功解析到一帧；`false` 表示超时或校验失败。
+ */
 bool YfrobotMP3V3::receiveFrame(Frame &frame, uint32_t timeoutMs) {
   if (_stream == nullptr) {
     return false;
@@ -508,6 +782,11 @@ bool YfrobotMP3V3::receiveFrame(Frame &frame, uint32_t timeoutMs) {
   return false;
 }
 
+/**
+ * @brief 清空串口接收缓冲区。
+ * @param 无。
+ * @return 无。
+ */
 void YfrobotMP3V3::clearInput() {
   if (_stream == nullptr) {
     return;
@@ -518,6 +797,15 @@ void YfrobotMP3V3::clearInput() {
   }
 }
 
+/**
+ * @brief 计算一帧数据的校验和。
+ * @param deviceId 设备地址。
+ * @param frameLength 整帧长度。
+ * @param command 指令码。
+ * @param payload 数据区首地址，可为空。
+ * @param payloadLength 数据区长度，单位字节。
+ * @return 校验和低 8 位。
+ */
 uint8_t YfrobotMP3V3::checksumForFrame(uint16_t deviceId,
                                        uint8_t frameLength,
                                        uint8_t command,
@@ -536,6 +824,13 @@ uint8_t YfrobotMP3V3::checksumForFrame(uint16_t deviceId,
   return static_cast<uint8_t>(sum & 0xFF);
 }
 
+/**
+ * @brief 将返回帧中的 ASCII 数据复制到字符串缓冲区。
+ * @param frame 已解析完成的返回帧。
+ * @param buffer 目标缓冲区。
+ * @param bufferLength 缓冲区长度。
+ * @return `true` 表示复制成功；`false` 表示参数非法或数据为空。
+ */
 bool YfrobotMP3V3::copyAsciiPayload(const Frame &frame, char *buffer, size_t bufferLength) const {
   if (buffer == nullptr || bufferLength == 0 || frame.dataLength == 0) {
     return false;
@@ -549,6 +844,13 @@ bool YfrobotMP3V3::copyAsciiPayload(const Frame &frame, char *buffer, size_t buf
   return true;
 }
 
+/**
+ * @brief 发送查询命令并读取两字节无符号整数结果。
+ * @param command 查询指令码。
+ * @param value 用于返回结果的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
 bool YfrobotMP3V3::readU16Response(uint8_t command, uint16_t &value, uint32_t timeoutMs) {
   Frame frame;
   if (!queryFrame(command, frame, timeoutMs) || frame.dataLength < 2) {
