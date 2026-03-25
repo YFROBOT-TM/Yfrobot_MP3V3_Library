@@ -173,7 +173,7 @@ uint32_t YfrobotMP3V3::baud() const {
  * @return 无。
  */
 void YfrobotMP3V3::setDeviceId(uint16_t deviceId) {
-  // _deviceId = deviceId;
+  _deviceId = deviceId;
 }
 
 /**
@@ -619,19 +619,31 @@ bool YfrobotMP3V3::sendCommand(uint8_t command, const uint8_t *payload, size_t p
  * @return `true` 表示查询成功；`false` 表示发送失败、超时或解析失败。
  */
 bool YfrobotMP3V3::queryFrame(uint8_t command, Frame &frame, uint32_t timeoutMs) {
-  if (!sendCommand(command)) {
+  if (!isConnected() || timeoutMs == 0) {
     return false;
   }
 
   const uint32_t startTime = millis();
+  uint32_t nextSendTime = startTime;
+
   while (millis() - startTime < timeoutMs) {
+    const uint32_t now = millis();
+    if (now >= nextSendTime) {
+      clearInput();
+      if (!sendFrame(command, nullptr, 0)) {
+        return false;
+      }
+      nextSendTime = now + 120;
+    }
+
     const uint32_t elapsed = millis() - startTime;
     const uint32_t remaining = (elapsed < timeoutMs) ? (timeoutMs - elapsed) : 0;
     if (remaining == 0) {
       break;
     }
 
-    if (!receiveFrame(frame, remaining)) {
+    const uint32_t sliceTimeout = (remaining > 120) ? 120 : remaining;
+    if (!receiveFrame(frame, sliceTimeout)) {
       continue;
     }
 
@@ -858,10 +870,24 @@ bool YfrobotMP3V3::copyAsciiPayload(const Frame &frame, char *buffer, size_t buf
  */
 bool YfrobotMP3V3::readU16Response(uint8_t command, uint16_t &value, uint32_t timeoutMs) {
   Frame frame;
-  if (!queryFrame(command, frame, timeoutMs) || frame.dataLength < 2) {
+  if (!queryFrame(command, frame, timeoutMs)) {
     return false;
   }
 
-  value = static_cast<uint16_t>(frame.data[0] << 8) | frame.data[1];
-  return true;
+  if (frame.dataLength >= 2) {
+    value = static_cast<uint16_t>(frame.data[0] << 8) | frame.data[1];
+    return true;
+  }
+
+  if (frame.dataLength == 1) {
+    value = frame.data[0];
+    return true;
+  }
+
+  if (command == CMD_READ_DEVICE_ID) {
+    value = frame.deviceId;
+    return true;
+  }
+
+  return false;
 }
