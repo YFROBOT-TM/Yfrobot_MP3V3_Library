@@ -439,15 +439,6 @@ bool YfrobotMP3V3::saveSettings() {
 }
 
 /**
- * @brief 恢复默认参数。
- * @param 无。
- * @return `true` 表示命令发送成功；`false` 表示发送失败。
- */
-bool YfrobotMP3V3::restoreFactorySettings() {
-  return sendCommand(CMD_RESTORE_DEFAULTS);
-}
-
-/**
  * @brief 重启模块。
  * @param 无。
  * @return `true` 表示命令发送成功；`false` 表示发送失败。
@@ -469,46 +460,6 @@ bool YfrobotMP3V3::readPlayState(PlayState &state, uint32_t timeoutMs) {
   }
   state = static_cast<PlayState>(frame.data[0]);
   return true;
-}
-
-/**
- * @brief 查询当前在线盘符位掩码。
- * @param mask 用于返回在线盘符掩码的引用变量。
- * @param timeoutMs 查询超时时间，单位毫秒。
- * @return `true` 表示查询成功；`false` 表示超时或解析失败。
- */
-bool YfrobotMP3V3::readOnlineStorageMask(uint8_t &mask, uint32_t timeoutMs) {
-  Frame frame;
-  if (!queryFrame(CMD_QUERY_ONLINE_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
-    return false;
-  }
-  mask = frame.data[0];
-  return true;
-}
-
-/**
- * @brief 查询当前播放盘符。
- * @param storage 用于返回盘符的引用变量。
- * @param timeoutMs 查询超时时间，单位毫秒。
- * @return `true` 表示查询成功；`false` 表示超时或解析失败。
- */
-bool YfrobotMP3V3::readCurrentStorage(StorageDevice &storage, uint32_t timeoutMs) {
-  Frame frame;
-  if (!queryFrame(CMD_QUERY_CURRENT_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
-    return false;
-  }
-  storage = static_cast<StorageDevice>(frame.data[0]);
-  return true;
-}
-
-/**
- * @brief 切换当前播放盘符。
- * @param storage 目标盘符。
- * @return `true` 表示命令发送成功；`false` 表示发送失败。
- */
-bool YfrobotMP3V3::switchStorage(StorageDevice storage) {
-  const uint8_t payload = static_cast<uint8_t>(storage);
-  return sendCommand(CMD_SWITCH_STORAGE, &payload, 1);
 }
 
 /**
@@ -546,19 +497,46 @@ bool YfrobotMP3V3::readCurrentTrackName(char *buffer, size_t bufferLength, uint3
   return copyAsciiPayload(frame, buffer, bufferLength);
 }
 
+
+/*======================================= 以下函数无用 暂保留 =======================================*/
 /**
- * @brief 查询当前曲目的短文件名。
- * @param buffer 用于接收短文件名的缓冲区。
- * @param bufferLength 缓冲区长度。
+ * @brief 查询当前在线盘符位掩码。
+ * @param mask 用于返回在线盘符掩码的引用变量。
  * @param timeoutMs 查询超时时间，单位毫秒。
- * @return `true` 表示查询成功；`false` 表示超时、参数非法或当前无返回。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
  */
-bool YfrobotMP3V3::readShortFileName(char *buffer, size_t bufferLength, uint32_t timeoutMs) {
+bool YfrobotMP3V3::readOnlineStorageMask(uint8_t &mask, uint32_t timeoutMs) {
   Frame frame;
-  if (!queryFrame(CMD_QUERY_SHORT_FILE_NAME, frame, timeoutMs)) {
+  if (!queryFrame(CMD_QUERY_ONLINE_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
     return false;
   }
-  return copyAsciiPayload(frame, buffer, bufferLength);
+  mask = frame.data[0];
+  return true;
+}
+
+/**
+ * @brief 查询当前播放盘符。
+ * @param storage 用于返回盘符的引用变量。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时或解析失败。
+ */
+bool YfrobotMP3V3::readCurrentStorage(StorageDevice &storage, uint32_t timeoutMs) {
+  Frame frame;
+  if (!queryFrame(CMD_QUERY_CURRENT_STORAGE, frame, timeoutMs) || frame.dataLength < 1) {
+    return false;
+  }
+  storage = static_cast<StorageDevice>(frame.data[0]);
+  return true;
+}
+
+/**
+ * @brief 切换到指定盘符。
+ * @param storage 目标盘符。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
+bool YfrobotMP3V3::switchStorage(StorageDevice storage) {
+  const uint8_t payload = static_cast<uint8_t>(storage);
+  return sendCommand(CMD_SWITCH_STORAGE, &payload, 1);
 }
 
 /**
@@ -589,6 +567,31 @@ bool YfrobotMP3V3::readBaudRate(uint32_t &baudRate, uint32_t timeoutMs) {
              static_cast<uint32_t>(frame.data[3]);
   return true;
 }
+
+/**
+ * @brief 恢复默认参数。
+ * @param 无。
+ * @return `true` 表示命令发送成功；`false` 表示发送失败。
+ */
+bool YfrobotMP3V3::restoreFactorySettings() {
+  return sendCommand(CMD_RESTORE_DEFAULTS);
+}
+
+/**
+ * @brief 查询当前曲目的短文件名。
+ * @param buffer 用于接收短文件名的缓冲区。
+ * @param bufferLength 缓冲区长度。
+ * @param timeoutMs 查询超时时间，单位毫秒。
+ * @return `true` 表示查询成功；`false` 表示超时、参数非法或当前无返回。
+ */
+bool YfrobotMP3V3::readShortFileName(char *buffer, size_t bufferLength, uint32_t timeoutMs) {
+  Frame frame;
+  if (!queryFrame(CMD_QUERY_SHORT_FILE_NAME, frame, timeoutMs)) {
+    return false;
+  }
+  return copyAsciiPayload(frame, buffer, bufferLength);
+}
+/*======================================= 以上函数无用 暂保留 =======================================*/
 
 /**
  * @brief 发送任意协议命令。
