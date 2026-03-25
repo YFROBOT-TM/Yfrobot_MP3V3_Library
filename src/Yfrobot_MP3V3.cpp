@@ -1,41 +1,41 @@
 #include "Yfrobot_MP3V3.h"
 
 namespace {
-static const uint8_t CMD_QUERY_PLAY_STATE = 0x01;
-static const uint8_t CMD_PLAY = 0x02;
-static const uint8_t CMD_PAUSE = 0x03;
-static const uint8_t CMD_STOP = 0x04;
-static const uint8_t CMD_PREVIOUS_TRACK = 0x05;
-static const uint8_t CMD_NEXT_TRACK = 0x06;
-static const uint8_t CMD_PLAY_TRACK = 0x07;
-static const uint8_t CMD_PLAY_PATH = 0x08;
-static const uint8_t CMD_QUERY_TOTAL_TRACKS = 0x0C;
-static const uint8_t CMD_QUERY_CURRENT_TRACK_NAME = 0x0D;
-static const uint8_t CMD_PREVIOUS_FOLDER = 0x0E;
-static const uint8_t CMD_NEXT_FOLDER = 0x0F;
-static const uint8_t CMD_STOP_ADVERT = 0x10;
-static const uint8_t CMD_QUERY_FOLDER_TRACKS = 0x12;
-static const uint8_t CMD_SET_VOLUME = 0x13;
-static const uint8_t CMD_VOLUME_UP = 0x14;
-static const uint8_t CMD_VOLUME_DOWN = 0x15;
-static const uint8_t CMD_QUERY_VOLUME = 0x16;
-static const uint8_t CMD_INSERT_ADVERT = 0x17;
-static const uint8_t CMD_SET_PLAYBACK_MODE = 0x18;
-static const uint8_t CMD_QUERY_PLAYBACK_MODE = 0x19;
-static const uint8_t CMD_SET_EQ = 0x1A;
-static const uint8_t CMD_PLAY_COMBINATION = 0x1B;
-static const uint8_t CMD_SELECT_TRACK = 0x1F;
-static const uint8_t CMD_SAVE_SETTINGS = 0x32;
-static const uint8_t CMD_REBOOT = 0x34;
+static const uint8_t CMD_QUERY_PLAY_STATE = 0x01;         // 查询当前播放状态
+static const uint8_t CMD_PLAY = 0x02;                     // 播放当前曲目
+static const uint8_t CMD_PAUSE = 0x03;                    // 暂停当前播放
+static const uint8_t CMD_STOP = 0x04;                     // 停止当前播放
+static const uint8_t CMD_PREVIOUS_TRACK = 0x05;           // 切换到上一曲
+static const uint8_t CMD_NEXT_TRACK = 0x06;               // 切换到下一曲
+static const uint8_t CMD_PLAY_TRACK = 0x07;               // 指定根目录曲目并播放
+static const uint8_t CMD_PLAY_PATH = 0x08;                // 指定路径播放
+static const uint8_t CMD_QUERY_TOTAL_TRACKS = 0x0C;       // 查询当前盘符总曲目数
+static const uint8_t CMD_QUERY_CURRENT_TRACK_NAME = 0x0D; // 查询当前曲目名称
+static const uint8_t CMD_PREVIOUS_FOLDER = 0x0E;          // 切换到上一文件夹播放
+static const uint8_t CMD_NEXT_FOLDER = 0x0F;              // 切换到下一文件夹播放
+static const uint8_t CMD_STOP_ADVERT = 0x10;              // 结束插播
+static const uint8_t CMD_QUERY_FOLDER_TRACKS = 0x12;      // 查询当前文件夹曲目数
+static const uint8_t CMD_SET_VOLUME = 0x13;               // 直接设置音量
+static const uint8_t CMD_VOLUME_UP = 0x14;                // 音量加 1
+static const uint8_t CMD_VOLUME_DOWN = 0x15;              // 音量减 1
+static const uint8_t CMD_QUERY_VOLUME = 0x16;             // 查询当前音量
+static const uint8_t CMD_INSERT_ADVERT = 0x17;            // 指定路径插播
+static const uint8_t CMD_SET_PLAYBACK_MODE = 0x18;        // 设置播放模式和循环次数
+static const uint8_t CMD_QUERY_PLAYBACK_MODE = 0x19;      // 查询播放模式和循环次数
+static const uint8_t CMD_SET_EQ = 0x1A;                   // 设置 EQ 模式
+static const uint8_t CMD_PLAY_COMBINATION = 0x1B;         // 组合播放
+static const uint8_t CMD_SELECT_TRACK = 0x1F;             // 选曲但不立即播放
+static const uint8_t CMD_SAVE_SETTINGS = 0x32;            // 保存当前参数
+static const uint8_t CMD_REBOOT = 0x34;                   // 重启模块
 
 /*======== 以下指令无用 暂保留 ========*/
-static const uint8_t CMD_QUERY_ONLINE_STORAGE = 0x09;
-static const uint8_t CMD_QUERY_CURRENT_STORAGE = 0x0A;
-static const uint8_t CMD_SWITCH_STORAGE = 0x0B;
-static const uint8_t CMD_READ_DEVICE_ID = 0x30;
-static const uint8_t CMD_READ_BAUD_RATE = 0x31;
-static const uint8_t CMD_RESTORE_DEFAULTS = 0x33;
-static const uint8_t CMD_QUERY_SHORT_FILE_NAME = 0x1E;
+static const uint8_t CMD_QUERY_ONLINE_STORAGE = 0x09;     // 查询当前在线盘符
+static const uint8_t CMD_QUERY_CURRENT_STORAGE = 0x0A;    // 查询当前播放盘符
+static const uint8_t CMD_SWITCH_STORAGE = 0x0B;           // 切换到指定盘符
+static const uint8_t CMD_READ_DEVICE_ID = 0x30;           // 读取模块设备地址
+static const uint8_t CMD_READ_BAUD_RATE = 0x31;           // 读取模块波特率
+static const uint8_t CMD_RESTORE_DEFAULTS = 0x33;         // 恢复出厂默认参数
+static const uint8_t CMD_QUERY_SHORT_FILE_NAME = 0x1E;    // 查询歌曲短文件名
 }
 
 /**
