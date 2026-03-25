@@ -147,8 +147,8 @@ void loop() {
   if (cmd == 'n') player.nextTrack();
   if (cmd == 'b') player.previousTrack();
   if (cmd == 'c') player.selectTrack(3);
-  if (cmd == 'f') player.playPath(YfrobotMP3V3::STORAGE_FLASH, "/chabo/00002.*");
-  if (cmd == 'i') player.insertAdvert(YfrobotMP3V3::STORAGE_FLASH, "/chabo/00001.*");
+  if (cmd == 'f') player.playPath("/chabo/00002.*");
+  if (cmd == 'i') player.insertAdvert("/chabo/00001.*");
   if (cmd == 'e') player.stopAdvert();
   if (cmd == '+') player.volumeUp();
   if (cmd == '-') player.volumeDown();

@@ -159,11 +159,11 @@ void loop() {
 - `selectTrack(uint16_t trackNumber)`
   指定根目录曲目编号但不立即播放，随后可再调用 `play()`。
 
-- `playPath(StorageDevice storage, const char *path)`
+- `playPath(const char *path, StorageDevice storage = STORAGE_FLASH)`
   指定盘符和路径播放，例如：
   `playPath(STORAGE_FLASH, "/chabo/00001.*")`
 
-- `insertAdvert(StorageDevice storage, const char *path)`
+- `insertAdvert(const char *path, StorageDevice storage = STORAGE_FLASH)`
   指定盘符和路径进行插播，插播完成后会回到原来的播放状态。
 
 - `stopAdvert()`

@@ -276,6 +276,10 @@ bool YfrobotMP3V3::playPath(StorageDevice storage, const char *path) {
   return sendCommand(CMD_PLAY_PATH, payload, pathLength + 1);
 }
 
+bool YfrobotMP3V3::playPath(const char *path, StorageDevice storage) {
+  return playPath(storage, path);
+}
+
 /**
  * @brief 指定盘符和路径进行插播。
  * @param storage 目标盘符。
@@ -296,6 +300,10 @@ bool YfrobotMP3V3::insertAdvert(StorageDevice storage, const char *path) {
   payload[0] = static_cast<uint8_t>(storage);
   memcpy(payload + 1, path, pathLength);
   return sendCommand(CMD_INSERT_ADVERT, payload, pathLength + 1);
+}
+
+bool YfrobotMP3V3::insertAdvert(const char *path, StorageDevice storage) {
+  return insertAdvert(storage, path);
 }
 
 /**

@@ -159,12 +159,14 @@ void loop() {
 - `selectTrack(uint16_t trackNumber)`
   Selects a root directory track without playing it immediately. You can call `play()` afterward.
 
-- `playPath(StorageDevice storage, const char *path)`
-  Plays a file by storage and path, for example:
-  `playPath(STORAGE_FLASH, "/chabo/00001.*")`
+- `playPath(const char *path, StorageDevice storage = STORAGE_FLASH)`
+  Plays a file by path. The default storage is `FLASH`, for example:
+  `playPath("/chabo/00001.*")`
+  The old form is still supported: `playPath(STORAGE_FLASH, "/chabo/00001.*")`
 
-- `insertAdvert(StorageDevice storage, const char *path)`
-  Starts insert playback by storage and path. After the insert track finishes, playback returns to the previous state.
+- `insertAdvert(const char *path, StorageDevice storage = STORAGE_FLASH)`
+  Starts insert playback by path. The default storage is `FLASH`. After the insert track finishes, playback returns to the previous state.
+  The old form is still supported: `insertAdvert(STORAGE_FLASH, "/chabo/00001.*")`
 
 - `stopAdvert()`
   Ends the current insert playback in advance.

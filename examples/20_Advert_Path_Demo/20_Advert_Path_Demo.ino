@@ -54,7 +54,7 @@ void setup() {
 
   // 指定路径插播 chabo/00001。
   Serial.println(F("步骤2：插播 /chabo/00001.*。"));
-  player.insertAdvert(YfrobotMP3V3::STORAGE_FLASH, "/chabo/00001.*");
+  player.insertAdvert("/chabo/00001.*");
   delay(3000);
 
   // 主动结束插播，恢复到插播前的主节目。
@@ -64,7 +64,7 @@ void setup() {
 
   // 直接指定路径播放 chabo/00002。
   Serial.println(F("步骤4：指定路径播放 /chabo/00002.*。"));
-  player.playPath(YfrobotMP3V3::STORAGE_FLASH, "/chabo/00002.*");
+  player.playPath("/chabo/00002.*");
   delay(3000);
 
   // 在 chabo 文件夹内切换到上一个文件夹播放。

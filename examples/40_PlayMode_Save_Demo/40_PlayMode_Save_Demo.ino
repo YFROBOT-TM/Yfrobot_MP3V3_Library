@@ -82,7 +82,7 @@ void setup() {
   // 设置为“文件夹循环 2 次”，然后播放 chabo 文件夹中的曲目。
   Serial.println(F("步骤3：设置为文件夹循环 2 次。"));
   player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_LOOP_FOLDER, 2);
-  player.playPath(YfrobotMP3V3::STORAGE_FLASH, "/chabo/00001.*");
+  player.playPath("/chabo/00001.*");
   delay(4000);
 
   // 查询并打印当前播放模式。
