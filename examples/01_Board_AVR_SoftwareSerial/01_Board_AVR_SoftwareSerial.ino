@@ -35,6 +35,8 @@ void setup() {
   // 使用广播地址，便于直接控制单个模块。
   player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
 
+  player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_STOP_AFTER_SINGLE, 0); // 设置播放模式6：播放完当前曲目一次，停止播放；
+
   Serial.println(F("AVR 软串口示例启动。"));
 
   // 查询当前音量，确认通信正常。
@@ -45,9 +47,11 @@ void setup() {
   } else {
     Serial.println(F("读取音量失败。"));
   }
+  player.setVolume(30);
+  delay(100);
 
-  // 播放根目录下的 00001 曲目。
-  player.playTrack(1);
+  // 播放根目录下的 00010 曲目。
+  player.playTrack(10);
 }
 
 void loop() {

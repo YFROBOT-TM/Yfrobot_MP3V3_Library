@@ -36,7 +36,7 @@ void setup() {
   // Mega2560 使用 Serial1 与模块通信。
   player.beginHardwareSerial(Serial1);
 #else
-  // UNO R3 使用 Serial 与模块通信。
+  // UNO R3 使用 Serial 与模块通信。注意通讯占用硬件串口，移除MP3模块，才可再次上传程序。
   player.beginHardwareSerial(Serial);
 #endif
 
@@ -45,10 +45,10 @@ void setup() {
 }
 
 void loop() {
-  // 播放根目录第 1 曲。
-  player.playTrack(1);
+  // 播放根目录第 9 曲。
+  player.playTrack(9);
   blinkOnce();
-  delay(2000);
+  delay(1000);
 
   // 切换到下一曲。
   player.nextTrack();
