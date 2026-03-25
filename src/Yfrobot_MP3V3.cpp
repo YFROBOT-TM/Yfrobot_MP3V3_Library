@@ -9,9 +9,6 @@ static const uint8_t CMD_PREVIOUS_TRACK = 0x05;
 static const uint8_t CMD_NEXT_TRACK = 0x06;
 static const uint8_t CMD_PLAY_TRACK = 0x07;
 static const uint8_t CMD_PLAY_PATH = 0x08;
-static const uint8_t CMD_QUERY_ONLINE_STORAGE = 0x09;
-static const uint8_t CMD_QUERY_CURRENT_STORAGE = 0x0A;
-static const uint8_t CMD_SWITCH_STORAGE = 0x0B;
 static const uint8_t CMD_QUERY_TOTAL_TRACKS = 0x0C;
 static const uint8_t CMD_QUERY_CURRENT_TRACK_NAME = 0x0D;
 static const uint8_t CMD_PREVIOUS_FOLDER = 0x0E;
@@ -27,13 +24,18 @@ static const uint8_t CMD_SET_PLAYBACK_MODE = 0x18;
 static const uint8_t CMD_QUERY_PLAYBACK_MODE = 0x19;
 static const uint8_t CMD_SET_EQ = 0x1A;
 static const uint8_t CMD_PLAY_COMBINATION = 0x1B;
-static const uint8_t CMD_QUERY_SHORT_FILE_NAME = 0x1E;
 static const uint8_t CMD_SELECT_TRACK = 0x1F;
+static const uint8_t CMD_SAVE_SETTINGS = 0x32;
+static const uint8_t CMD_REBOOT = 0x34;
+
+/*======== 以下指令无用 暂保留 ========*/
+static const uint8_t CMD_QUERY_ONLINE_STORAGE = 0x09;
+static const uint8_t CMD_QUERY_CURRENT_STORAGE = 0x0A;
+static const uint8_t CMD_SWITCH_STORAGE = 0x0B;
 static const uint8_t CMD_READ_DEVICE_ID = 0x30;
 static const uint8_t CMD_READ_BAUD_RATE = 0x31;
-static const uint8_t CMD_SAVE_SETTINGS = 0x32;
 static const uint8_t CMD_RESTORE_DEFAULTS = 0x33;
-static const uint8_t CMD_REBOOT = 0x34;
+static const uint8_t CMD_QUERY_SHORT_FILE_NAME = 0x1E;
 }
 
 /**
