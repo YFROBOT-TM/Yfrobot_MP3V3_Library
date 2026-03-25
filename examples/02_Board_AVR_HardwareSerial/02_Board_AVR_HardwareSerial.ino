@@ -40,7 +40,6 @@ void setup() {
   player.beginHardwareSerial(Serial);
 #endif
 
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   player.setVolume(20);
 }
 

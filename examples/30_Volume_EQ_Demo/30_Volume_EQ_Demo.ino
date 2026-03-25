@@ -73,8 +73,6 @@ void setup() {
     }
   }
 
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
-
   Serial.println(F("音量与 EQ 示例开始。"));
 
   // 播放根目录 00010 长音频，便于听出变化。

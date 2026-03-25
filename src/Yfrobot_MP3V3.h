@@ -26,11 +26,11 @@ public:
   /** @brief 协议帧结束字节。 */
   static const uint8_t kEndCode = 0xEF;
 
-  /** @brief 广播设备地址。 */
+  /** @brief 广播设备地址，默认使用。 */
   static const uint16_t kBroadcastDeviceId = 0xFFFF;
 
-  /** @brief 默认设备地址。 */
-  static const uint16_t kDefaultDeviceId = 0x0001;
+  // /** @brief 默认设备地址。 */
+  // static const uint16_t kDefaultDeviceId = 0x0001;
 
   /** @brief 默认波特率。 */
   static const uint32_t kDefaultBaud = 9600;

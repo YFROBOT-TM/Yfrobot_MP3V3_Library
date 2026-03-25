@@ -61,7 +61,6 @@ void setup() {
     }
   }
 
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   player.setVolume(25);
 
   Serial.println(F("播放模式与参数保存示例开始。"));

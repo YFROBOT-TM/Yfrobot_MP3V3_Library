@@ -166,12 +166,12 @@ uint32_t YfrobotMP3V3::baud() const {
 }
 
 /**
- * @brief 设置目标设备地址。
+ * @brief 设置目标设备地址,此函数无用，ID为厂家固化，无法修改
  * @param deviceId 设备地址。
  * @return 无。
  */
 void YfrobotMP3V3::setDeviceId(uint16_t deviceId) {
-  _deviceId = deviceId;
+  // _deviceId = deviceId;
 }
 
 /**

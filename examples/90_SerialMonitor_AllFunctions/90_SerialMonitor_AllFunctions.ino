@@ -129,7 +129,6 @@ void setup() {
     }
   }
 
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   printMenu();
 }
 

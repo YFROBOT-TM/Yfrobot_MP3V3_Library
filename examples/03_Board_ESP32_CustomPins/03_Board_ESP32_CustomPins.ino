@@ -29,7 +29,6 @@ void setup() {
 
   // 使用 ESP32 硬件串口 Serial2，并指定自定义引脚。
   player.beginHardwareSerial(Serial2, MP3_RX_PIN, MP3_TX_PIN);
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
 
   Serial.println(F("ESP32 自定义引脚示例启动。"));
 

@@ -45,7 +45,6 @@ void setup() {
     }
   }
 
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   player.setVolume(25);
 
   Serial.println(F("组合播放与重启示例开始。"));

@@ -66,7 +66,6 @@ YfrobotMP3V3 player;
 void setup() {
   Serial.begin(115200);
   player.beginSoftwareSerial(11, 10);  // RX, TX
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   player.setVolume(25);
   player.playTrack(10);
 }
@@ -134,10 +133,6 @@ void loop() {
   获取当前串口波特率。
 
 ### 6.2 设备地址
-
-- `setDeviceId(uint16_t deviceId)`
-  设置发送命令的目标设备地址，单模块项目通常建议使用广播地址 `kBroadcastDeviceId`。
-
 - `deviceId()`
   读取当前设置的目标设备地址。
 

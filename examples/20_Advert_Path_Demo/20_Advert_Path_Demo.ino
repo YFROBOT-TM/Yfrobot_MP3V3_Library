@@ -42,8 +42,7 @@ void setup() {
       delay(1000);
     }
   }
-
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
+  
   player.setVolume(25);
 
   Serial.println(F("插播与路径播放示例开始。"));

@@ -32,9 +32,7 @@ void setup() {
     }
   }
 
-  // 使用广播地址，便于直接控制单个模块。
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
-
+  Serial.println(F("ID"));
   player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_STOP_AFTER_SINGLE, 0); // 设置播放模式6：播放完当前曲目一次，停止播放；
 
   Serial.println(F("AVR 软串口示例启动。"));

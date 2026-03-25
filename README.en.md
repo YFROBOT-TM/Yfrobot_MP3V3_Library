@@ -66,7 +66,6 @@ YfrobotMP3V3 player;
 void setup() {
   Serial.begin(115200);
   player.beginSoftwareSerial(11, 10);  // RX, TX
-  player.setDeviceId(YfrobotMP3V3::kBroadcastDeviceId);
   player.setVolume(25);
   player.playTrack(10);
 }
@@ -134,10 +133,6 @@ void loop() {
   Gets the current serial baud rate.
 
 ### 6.2 Device Address
-
-- `setDeviceId(uint16_t deviceId)`
-  Sets the target device address for commands. For single-module projects, the broadcast address `kBroadcastDeviceId` is usually recommended.
-
 - `deviceId()`
   Reads the currently configured target device address.
 
