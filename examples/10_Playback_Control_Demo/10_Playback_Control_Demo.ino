@@ -35,15 +35,36 @@ static bool beginModule() {
 }
 
 /**
- * @brief 通过串口打印当前曲目名。
+ * @brief 通过串口打印当前曲目名。注意：只有在播放与暂停状态下才可查询到曲目名。
  */
 static void printTrackName() {
   char trackName[32];
   if (player.readCurrentTrackName(trackName, sizeof(trackName))) {
-    Serial.print(F("当前曲目："));
+    Serial.print(F("查询到当前曲目："));
     Serial.println(trackName);
   } else {
     Serial.println(F("当前曲目名称暂无返回。"));
+  }
+}
+
+/**
+ * @brief 通过串口打印当前曲目名。
+ */
+static void printPlayState() {
+
+  // 查询播放状态
+  YfrobotMP3V3::PlayState state;
+  if (player.readPlayState(state)) {
+    Serial.print(F("当前播放状态："));
+    Serial.print(static_cast<uint8_t>(state));
+    Serial.print(" - ");
+    if (state == 0) {
+      Serial.println(F("停止"));
+    } else if (state == 2) {
+      Serial.println(F("暂停"));
+    } else if (state == 1) {
+      Serial.println(F("播放中.."));
+    }
   }
 }
 
@@ -58,7 +79,7 @@ void setup() {
     }
   }
 
-  player.setVolume(25);
+  player.setVolume(25);  // 设置音量
 
   Serial.println(F("播放控制综合示例开始。"));
 
@@ -74,12 +95,17 @@ void setup() {
   // 直接播放根目录 00010 长音频。
   Serial.println(F("步骤1：播放根目录 00010。"));
   player.playTrack(10);
+  delay(500);
+
+  printPlayState();  // 查询播放状态
   delay(4000);
-  printTrackName();
+  printTrackName();  //打印当前曲目名。注意：只有在播放与暂停状态下才可查询到曲目名。
 
   // 暂停后稍等，用于观察暂停效果。
   Serial.println(F("步骤2：暂停播放。"));
   player.pause();
+
+  printPlayState();  // 查询播放状态
   delay(2000);
 
   // 继续播放同一曲目。
@@ -91,17 +117,19 @@ void setup() {
   Serial.println(F("步骤4：上一曲。"));
   player.previousTrack();
   delay(2000);
-  printTrackName();
+  printTrackName();  //打印当前曲目名。注意：只有在播放与暂停状态下才可查询到曲目名。
 
   // 再切换到下一曲。
   Serial.println(F("步骤5：下一曲。"));
   player.nextTrack();
   delay(2000);
-  printTrackName();
+  printTrackName();  //打印当前曲目名。注意：只有在播放与暂停状态下才可查询到曲目名。
 
   // 先停止，再用“选曲不播放”选择 00003。
   Serial.println(F("步骤6：停止播放。"));
   player.stop();
+
+  printPlayState();  // 查询播放状态
   delay(1500);
 
   Serial.println(F("步骤7：选中根目录 00003，但暂不播放。"));
@@ -112,7 +140,30 @@ void setup() {
   Serial.println(F("步骤8：执行播放。"));
   player.play();
   delay(3000);
-  printTrackName();
+  printTrackName();  //打印当前曲目名。注意：只有在播放与暂停状态下才可查询到曲目名。
+  player.stop();     // 停止播放
+
+
+  // 插播功能
+
+  // 直接播放根目录 00010 长音频。
+  Serial.println(F("步骤9：播放根目录 00010。"));
+  player.playTrack(10);
+  delay(500);
+
+  // 指定路径插播 chabo/00001。
+  Serial.println(F("步骤10：插播 /chabo/00001.*。"));
+  player.insertAdvert("/chabo/00001.*"); // 指定路径插播
+  // player.playPath("/chabo/00001.*"); // 指定路径播放
+  // player.playPreviousFolder();
+  if (player.readFolderTrackCount(totalTracks, 1500)) {
+    Serial.print(F("查询当前文件夹目数："));
+    Serial.println(totalTracks);
+  } else {
+    Serial.println(F("读取当前文件夹曲目数失败。"));
+  }
+  delay(7000);
+
 
   // 示例结束后停止，避免循环反复打断试听。
   Serial.println(F("步骤9：结束示例并停止播放。"));

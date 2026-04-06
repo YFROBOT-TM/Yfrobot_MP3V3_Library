@@ -245,6 +245,7 @@ public:
    * @return `true` 表示命令发送成功；`false` 表示参数非法或发送失败。
    */
   bool playPath(StorageDevice storage, const char *path);
+  bool playPath(const char *path, StorageDevice storage = YfrobotMP3V3::STORAGE_FLASH);
 
   /**
    * @brief 指定盘符和路径进行插播。
@@ -253,6 +254,7 @@ public:
    * @return `true` 表示命令发送成功；`false` 表示参数非法或发送失败。
    */
   bool insertAdvert(StorageDevice storage, const char *path);
+  bool insertAdvert(const char *path, StorageDevice storage = YfrobotMP3V3::STORAGE_FLASH);
 
   /**
    * @brief 提前结束当前插播。
