@@ -74,6 +74,15 @@ void setup() {
   }
 
   Serial.println(F("音量与 EQ 示例开始。"));
+  
+  // 通过暂停和继续播放切换多组 EQ，方便试听效果。
+  Serial.println(F("自行注释选择EQ模式，试听不同 EQ 模式。"));
+  // applyEqAndResume(YfrobotMP3V3::EQ_NORMAL, F("NORMAL"));
+  applyEqAndResume(YfrobotMP3V3::EQ_ROCK, F("ROCK"));
+  // applyEqAndResume(YfrobotMP3V3::EQ_POP, F("POP"));
+  // applyEqAndResume(YfrobotMP3V3::EQ_CLASSIC, F("CLASSIC"));
+  // applyEqAndResume(YfrobotMP3V3::EQ_JAZZ, F("JAZZ"));
+  delay(200);
 
   // 播放根目录 00010 长音频，便于听出变化。
   Serial.println(F("步骤1：播放根目录 00010。"));
@@ -108,15 +117,7 @@ void setup() {
   }
   printVolume();
 
-  // 通过暂停和继续播放切换多组 EQ，方便试听效果。
-  Serial.println(F("步骤6：依次试听不同 EQ 模式。"));
-  applyEqAndResume(YfrobotMP3V3::EQ_NORMAL, F("NORMAL"));
-  applyEqAndResume(YfrobotMP3V3::EQ_ROCK, F("ROCK"));
-  applyEqAndResume(YfrobotMP3V3::EQ_POP, F("POP"));
-  applyEqAndResume(YfrobotMP3V3::EQ_CLASSIC, F("CLASSIC"));
-  applyEqAndResume(YfrobotMP3V3::EQ_JAZZ, F("JAZZ"));
-
-  Serial.println(F("步骤7：示例结束，停止播放。"));
+  Serial.println(F("步骤6：示例结束，停止播放。"));
   player.stop();
 }
 
