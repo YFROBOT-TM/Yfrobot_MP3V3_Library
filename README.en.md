@@ -54,6 +54,10 @@ Place the entire library folder into:
 
 Then reopen Arduino IDE.
 
+> Note
+> Since v1.1.1, the library adds built-in command-gap control for timing-sensitive operations.
+> In most cases, sketches no longer need extra manual `delay()` calls between commands such as `setPlaybackMode()`, `setEq()`, `switchStorage()`, `saveSettings()` and the next command.
+
 ## 5. Quick Start
 
 ### 5.1 UNO R3 / Mega2560 Software Serial
@@ -327,6 +331,16 @@ void loop() {
 - Insert playback example: `/chabo/00001.*`
 - Path playback example: `/chabo/00002.*`
 
-## 10. License
+## 10. Version History
+
+### v1.1.1
+
+- Added library-level command-gap control to improve stability for commands that need internal module processing time.
+- Default gaps: normal commands `20ms`, configuration commands such as `setPlaybackMode`, `setEq`, `switchStorage` `50ms`, save/restore commands `200ms`, and `reboot()` `2000ms`.
+- `sendCommand()` and `queryFrame()` now follow the built-in pacing automatically, so most sketches no longer need extra manual `delay()` calls between these commands.
+- Improves reliability in scenarios such as `40_PlayMode_Save_Demo`, especially when playback starts immediately after changing playback mode.
+- Synchronized the README and library metadata with the new timing-control behavior for this release.
+
+## 11. License
 
 MIT License. See `extras/LICENSE` for details.

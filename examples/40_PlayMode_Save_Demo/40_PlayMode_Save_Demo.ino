@@ -1,18 +1,17 @@
 /*
  * 示例名称：40_PlayMode_Save_Demo
  * 示例功能：演示播放模式设置、循环次数设置、读取播放模式、
- *           保存参数以及恢复默认参数。
+ *           保存参数。
  * 演示逻辑：
  *   1. 设置“单曲播放停止”，播放根目录 00010
  *   2. 设置“单曲循环”，再次播放 00010
  *   3. 设置“文件夹循环，循环 2 次”，播放 /chabo/00001.*
  *   4. 查询当前播放模式和循环次数
  *   5. 保存参数
- *   6. 恢复出厂默认参数
  * 提醒：
  *   恢复默认参数会修改模块内部保存的设置，请根据需要使用。
  * 作者：YFROBOT
- * 日期：2026-03-24
+ * 日期：1026-03-24
  */
 
 #include <Yfrobot_MP3V3.h>
@@ -51,7 +50,7 @@ static void printPlaybackMode() {
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115100);
   delay(300);
 
   if (!beginModule()) {
@@ -61,7 +60,7 @@ void setup() {
     }
   }
 
-  player.setVolume(25);
+  // player.setVolume(25);
 
   Serial.println(F("播放模式与参数保存示例开始。"));
 
@@ -69,45 +68,43 @@ void setup() {
   Serial.println(F("步骤1：设置为单曲播放停止。"));
   player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_STOP_AFTER_SINGLE, 0);
   player.playTrack(10);
-  delay(4000);
+  delay(3000);
   player.stop();
 
   // 设置为“单曲循环”，再次试听根目录 00010。
   Serial.println(F("步骤2：设置为单曲循环。"));
   player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_LOOP_SINGLE, 0);
-  player.playTrack(10);
-  delay(4000);
+  player.playTrack(1);
+  delay(2000);
   player.stop();
 
   // 设置为“文件夹循环 2 次”，然后播放 chabo 文件夹中的曲目。
   Serial.println(F("步骤3：设置为文件夹循环 2 次。"));
   player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_LOOP_FOLDER, 2);
   player.playPath("/chabo/00001.*");
-  delay(4000);
+  delay(15000);
+  player.stop();
 
   // 查询并打印当前播放模式。
   Serial.println(F("步骤4：读取当前播放模式。"));
   printPlaybackMode();
 
+  Serial.println(F("步骤5：返回单独停止模式。"));
+  player.setPlaybackMode(YfrobotMP3V3::PLAY_MODE_STOP_AFTER_SINGLE, 0);
+
   // 保存当前参数，掉电后仍可保留。
-  Serial.println(F("步骤5：保存当前参数。"));
+  Serial.println(F("步骤6：保存当前参数。"));
   if (player.saveSettings()) {
     Serial.println(F("参数保存命令已发送。"));
   } else {
     Serial.println(F("参数保存命令发送失败。"));
   }
   delay(1500);
-
-  // 恢复默认参数，方便再次演示出厂状态。
-  Serial.println(F("步骤6：恢复默认参数。"));
-  if (player.restoreFactorySettings()) {
-    Serial.println(F("恢复默认参数命令已发送。"));
-  } else {
-    Serial.println(F("恢复默认参数命令发送失败。"));
-  }
-
-  player.stop();
 }
 
 void loop() {
+  // 查询并打印当前播放模式。
+  Serial.println(F("读取当前播放模式。"));
+  printPlaybackMode();
+  delay(1500);
 }

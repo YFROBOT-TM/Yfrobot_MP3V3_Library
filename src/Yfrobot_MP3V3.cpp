@@ -51,7 +51,8 @@ YfrobotMP3V3::YfrobotMP3V3()
 #endif
       _transportMode(TRANSPORT_NONE),
       _deviceId(kBroadcastDeviceId),
-      _baud(kDefaultBaud) {}
+      _baud(kDefaultBaud),
+      _nextCommandReadyAt(0) {}
 
 /**
  * @brief 析构函数，释放串口资源。
@@ -138,6 +139,7 @@ void YfrobotMP3V3::end() {
   _stream = nullptr;
   _hardwareSerial = nullptr;
   _transportMode = TRANSPORT_NONE;
+  _nextCommandReadyAt = 0;
 }
 
 /**
@@ -615,8 +617,15 @@ bool YfrobotMP3V3::sendCommand(uint8_t command, const uint8_t *payload, size_t p
     return false;
   }
 
+  // 先等待上一条命令的最小处理间隔结束。
+  waitCommandGap();
   clearInput();
-  return sendFrame(command, payload, payloadLength);
+  const bool sent = sendFrame(command, payload, payloadLength);
+  if (sent) {
+    // 发送成功后，记录下一条命令的可发送时刻。
+    _nextCommandReadyAt = millis() + postCommandGapMs(command);
+  }
+  return sent;
 }
 
 /**
@@ -637,11 +646,16 @@ bool YfrobotMP3V3::queryFrame(uint8_t command, Frame &frame, uint32_t timeoutMs)
   while (millis() - startTime < timeoutMs) {
     const uint32_t now = millis();
     if (now >= nextSendTime) {
+      // 查询命令也要服从全局发送间隔，避免和前一条命令冲突。
+      waitCommandGap();
       clearInput();
       if (!sendFrame(command, nullptr, 0)) {
         return false;
       }
-      nextSendTime = now + 120;
+      const uint32_t sentAt = millis();
+      // 查询帧本身也给模块留出内部处理时间。
+      _nextCommandReadyAt = sentAt + postCommandGapMs(command);
+      nextSendTime = sentAt + 120;
     }
 
     const uint32_t elapsed = millis() - startTime;
@@ -674,9 +688,43 @@ bool YfrobotMP3V3::beginWithActiveStream(uint32_t baud) {
   }
 
   _baud = baud;
+  // 新建连接后重置命令冷却状态。
+  _nextCommandReadyAt = 0;
   delay(20);
   clearInput();
   return true;
+}
+
+/**
+ * @brief 等待到当前命令间隔满足，再继续发送下一帧。
+ */
+void YfrobotMP3V3::waitCommandGap() {
+  while (static_cast<int32_t>(_nextCommandReadyAt - millis()) > 0) {
+    delay(1);
+  }
+}
+
+/**
+ * @brief 根据指令类型返回建议的后续间隔，
+ *        配置/保存/重启类命令比普通播放控制命令更长。
+ */
+uint16_t YfrobotMP3V3::postCommandGapMs(uint8_t command) const {
+  switch (command) {
+    case CMD_SET_PLAYBACK_MODE:
+    case CMD_SET_EQ:
+    case CMD_SWITCH_STORAGE:
+      return kConfigCommandGapMs;
+
+    case CMD_SAVE_SETTINGS:
+    case CMD_RESTORE_DEFAULTS:
+      return kSaveCommandGapMs;
+
+    case CMD_REBOOT:
+      return kRebootCommandGapMs;
+
+    default:
+      return kNormalCommandGapMs;
+  }
 }
 
 /**

@@ -52,21 +52,22 @@ void setup() {
   // 先演示 01 + 02 两首组合播放。
   Serial.println(F("步骤1：组合播放 01 + 02。"));
   player.playCombination("0102");
-  delay(5000);
+  delay(10000);
 
   // 停止组合播放，准备演示更长的组合。
   Serial.println(F("步骤2：停止组合播放。"));
   player.stop();
-  delay(1500);
 
   // 再演示 01 + 02 + 03 三首组合播放。
   Serial.println(F("步骤3：组合播放 01 + 02 + 03。"));
   player.playCombination("010203");
-  delay(7000);
+  delay(15000);
 
   // 演示重启模块命令。
   Serial.println(F("步骤4：发送重启模块命令。"));
-  player.reboot();
+  // player.reboot();
+  player.stop();
+  delay(500);
 }
 
 void loop() {

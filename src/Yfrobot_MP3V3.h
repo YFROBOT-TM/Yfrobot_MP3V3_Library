@@ -472,6 +472,13 @@ private:
   /** @brief 最大数据区长度。 */
   static const size_t kMaxPayloadBytes = 96;
 
+  // 不同类型命令在模块内部生效所需的最小间隔，
+  // 避免连续发包过快导致部分无返回命令被忽略。
+  static const uint16_t kNormalCommandGapMs = 20;
+  static const uint16_t kConfigCommandGapMs = 50;
+  static const uint16_t kSaveCommandGapMs = 200;
+  static const uint16_t kRebootCommandGapMs = 2000;
+
   Stream *_stream;
   HardwareSerial *_hardwareSerial;
 #if YFMP3V3_HAS_SOFTWARE_SERIAL
@@ -480,6 +487,8 @@ private:
   TransportMode _transportMode;
   uint16_t _deviceId;
   uint32_t _baud;
+  // 记录下一条命令允许发送的最早时刻。
+  uint32_t _nextCommandReadyAt;
 
   /**
    * @brief 完成串口对象初始化后的公共收尾动作。
@@ -487,6 +496,11 @@ private:
    * @return `true` 表示初始化成功；`false` 表示当前流对象为空。
    */
   bool beginWithActiveStream(uint32_t baud);
+
+  // 如果上一条命令仍在冷却期，则等待到可以继续发包。
+  void waitCommandGap();
+  // 根据命令类型返回发送后的最小间隔。
+  uint16_t postCommandGapMs(uint8_t command) const;
 
   /**
    * @brief 按协议打包并发送完整数据帧。

@@ -54,6 +54,10 @@
 
 然后重新打开 Arduino IDE。
 
+> 提示
+> 从 v1.1.1 开始，库内置了对时序敏感命令的自动间隔控制。
+> 大多数情况下，草图在调用 `setPlaybackMode()`、`setEq()`、`switchStorage()`、`saveSettings()` 等命令后，不再需要额外手动补 `delay()` 再发送下一条命令。
+
 ## 5. 快速开始
 
 ### 5.1 UNO R3 / Mega2560 软串口
@@ -325,6 +329,16 @@ void loop() {
 - 插播示例：`/chabo/00001.*`
 - 路径播放示例：`/chabo/00002.*`
 
-## 10. License
+## 10. 版本更新
+
+### v1.1.1
+
+- 新增库级命令间隔控制，统一处理模块执行无返回命令时所需的内部生效时间。
+- 默认间隔为：普通命令 `20ms`，配置类命令如 `setPlaybackMode`、`setEq`、`switchStorage` 为 `50ms`，保存/恢复类命令为 `200ms`，`reboot()` 为 `2000ms`。
+- `sendCommand()` 与 `queryFrame()` 现在会自动遵守上述节奏，多数示例场景下不再需要额外手动 `delay()`。
+- 重点提升了 `40_PlayMode_Save_Demo` 这类“设置后紧接播放”的稳定性，减少连续发包过快导致的命令失效问题。
+- 同步更新了 README 与库说明文件，使发布说明与当前库实现保持一致。
+
+## 11. License
 
 MIT License，详见 `extras/LICENSE`。
